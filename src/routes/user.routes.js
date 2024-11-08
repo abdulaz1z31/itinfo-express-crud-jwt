@@ -1,5 +1,8 @@
 import { Router } from "express";
 import {
+  createAuthor,
+  createCategory,
+  createUser,
   deleteAuthorById,
   deleteCategoryById,
   deleteUserById,
@@ -14,28 +17,34 @@ import {
   updateAuthorById,
   updateUserById,
 } from "../controllers/index.controller.js";
-import { validationMiddleware } from "../middlewares/index.middleware.js";
+import { validationMiddleware, adminOrSuperAdminGuard, checkIsSelfGuard, isSuperAdmin} from "../middlewares/index.middleware.js";
+import { registerSchema, loginSchema, authorSchema, cartegorySchema } from "../database/schemas/index.schema.js";
+import { checkTokens } from "../middlewares/check.tokens.js";
+
 
 export const userRouter = new Router();
 
 //user, admin , SuperAmin uchun faqat
-userRouter.post("/register", registerUser);
-userRouter.post("/login", loginUser);
+userRouter.post("/register", validationMiddleware(registerSchema), registerUser);
+userRouter.post("/login", validationMiddleware(loginSchema), loginUser);
 
 //superAdmin va admin userlar malumotlarni ustida ishlashi uchun superAdmin adminni ham chpishi mumkun
-userRouter.get("/user", getAllUsers);
-userRouter.get("/user/:id", getUserById);
-userRouter.post("/user/:id", updateUserById);
-userRouter.delete("/user/:id", deleteUserById);
+userRouter.post("user", checkTokens, adminOrSuperAdminGuard ,validationMiddleware(registerSchema), createUser)
+userRouter.get("/user",checkTokens, adminOrSuperAdminGuard, getAllUsers);
+userRouter.get("/user/:id",checkTokens, isSuperAdmin,checkIsSelfGuard, getUserById);//ISAdmin bu yerda oddiy admin superadminni ga dostup olmasligi uchun tekshirganman
+userRouter.post("/user/:id", checkTokens, isSuperAdmin, checkIsSelfGuard, updateUserById);
+userRouter.delete("/user/:id", checkTokens, isSuperAdmin, checkIsSelfGuard, deleteUserById);
 
-//SuperAdmin uchun hamma narsaga dostup bor adminda esa hammasiga ham emas
-userRouter.get("/author", getAllAuthors);
-userRouter.get("/author/:id", getAuthorById);
-userRouter.post("/author/:id", updateAuthorById);
-userRouter.delete("/author/:id", deleteAuthorById);
+//SuperAdmin va admin uchun hamma narsaga dostup bor 
+userRouter.post("/author", checkTokens, adminOrSuperAdminGuard, validationMiddleware(authorSchema), createAuthor)
+userRouter.get("/author",checkTokens,checkIsSelfGuard, getAllAuthors);
+userRouter.get("/author/:id", checkTokens, checkIsSelfGuard, getAuthorById);
+userRouter.post("/author/:id", checkTokens, checkIsSelfGuard, updateAuthorById);
+userRouter.delete("/author/:id", checkTokens, checkIsSelfGuard, deleteAuthorById);
 
-//SuperAdmin uchun hamma narsaga dostup bor adminda esa hammasiga ham emas
-userRouter.get("/cartegory", getAllCategories);
-userRouter.get("/cartegory/:id", getCategoryById);
-userRouter.post("/cartegory/:id", updateUserById);
-userRouter.delete("/cartegory/:id", deleteCategoryById);
+//SuperAdmin va admin uchun hamma narsaga dostup bor 
+userRouter.post("/cartegory", checkTokens, adminOrSuperAdminGuard, validationMiddleware(cartegorySchema), createCategory)
+userRouter.get("/cartegory", checkTokens, adminOrSuperAdminGuard, getAllCategories);
+userRouter.get("/cartegory/:id", checkTokens, adminOrSuperAdminGuard, getCategoryById);
+userRouter.post("/cartegory/:id", checkTokens, adminOrSuperAdminGuard, updateUserById);
+userRouter.delete("/cartegory/:id", checkTokens, adminOrSuperAdminGuard, deleteCategoryById);
