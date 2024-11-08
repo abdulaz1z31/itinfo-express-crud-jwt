@@ -10,7 +10,11 @@ app.use(express.json())
 app.use("/user", userRouter)
 app.use("/cartegory", cartegoryRouter)
 app.use("/author", authorRouter)
-
+app.use((err, req, res, next) => {
+    if (err) {
+       res.status(500).send("Something wrong") 
+    }
+})
 
 app.listen(port, async () => {
     await databaseConnection()

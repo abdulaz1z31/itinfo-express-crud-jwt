@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { createCartegory, getAllCartegories, getCartegoryById } from "../controllers/index.controller.js";
-
+import { createCategory, getAllCategories, getCategoryById } from "../controllers/index.controller.js";
+import { cartegorySchema } from "../database/schemas/index.schema.js";
+import { validationMiddleware } from "../middlewares/index.middleware.js";
 export const cartegoryRouter = new Router()
 
 
-cartegoryRouter.post("/cartegory", createCartegory)
-cartegoryRouter.get("/cartegory", getAllCartegories)
-cartegoryRouter.get("/cartegory/:id", getCartegoryById)
+cartegoryRouter.post("/cartegory", validationMiddleware(cartegorySchema), createCategory)
+cartegoryRouter.get("/cartegory", getAllCategories)
+cartegoryRouter.get("/cartegory/:id", getCategoryById)

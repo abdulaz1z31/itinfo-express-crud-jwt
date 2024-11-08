@@ -1,4 +1,4 @@
-import {mongoose, connect, connection }from "mongoose";
+import {mongoose, connect }from "mongoose";
 import { db_url } from "../config/index.config.js";
 
 

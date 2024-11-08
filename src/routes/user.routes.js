@@ -1,19 +1,20 @@
 import { Router } from "express";
 import {
   deleteAuthorById,
-  deleteCartegoryById,
+  deleteCategoryById,
   deleteUserById,
-  getAllAthores,
-  getAllCartegories,
+  getAllAuthors,
+  getAllCategories,
   getAllUsers,
   getAuthorById,
-  getCartegoryById,
+  getCategoryById,
   getUserById,
   loginUser,
   registerUser,
   updateAuthorById,
   updateUserById,
 } from "../controllers/index.controller.js";
+import { validationMiddleware } from "../middlewares/index.middleware.js";
 
 export const userRouter = new Router();
 
@@ -28,13 +29,13 @@ userRouter.post("/user/:id", updateUserById);
 userRouter.delete("/user/:id", deleteUserById);
 
 //SuperAdmin uchun hamma narsaga dostup bor adminda esa hammasiga ham emas
-userRouter.get("/author", getAllAthores);
+userRouter.get("/author", getAllAuthors);
 userRouter.get("/author/:id", getAuthorById);
 userRouter.post("/author/:id", updateAuthorById);
 userRouter.delete("/author/:id", deleteAuthorById);
 
 //SuperAdmin uchun hamma narsaga dostup bor adminda esa hammasiga ham emas
-userRouter.get("/cartegory", getAllCartegories);
-userRouter.get("/cartegory/:id", getCartegoryById);
+userRouter.get("/cartegory", getAllCategories);
+userRouter.get("/cartegory/:id", getCategoryById);
 userRouter.post("/cartegory/:id", updateUserById);
-userRouter.delete("/cartegory/:id", deleteCartegoryById);
+userRouter.delete("/cartegory/:id", deleteCategoryById);
